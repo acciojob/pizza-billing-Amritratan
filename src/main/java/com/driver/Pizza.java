@@ -2,13 +2,53 @@ package com.driver;
 
 public class Pizza {
 
-    private int price;
+    //prices
+    static int nonVegPizzaBasePrice = 400;
+    static int vegPizzaBasePrice = 300;
+
+    static int takeAwayPrice = 20;
+    private int cheesePrice;
+    private int toppingPrice;
+
+
+    //flags
+    private boolean isCheeseAdded;
+    private boolean isToppingAdded;
     private Boolean isVeg;
-    private String bill;
+    private boolean isTakeAway;
+    ToppingsAdder toppingsAdder;
+    CheeseAdder cheeseAdder;
+    BillGenerator billGenerator;
+    private int price;
+
+    public int getCheesePrice() {
+        return cheesePrice;
+    }
+
+    public int getToppingPrice() {
+        return toppingPrice;
+    }
+
+    public boolean isCheeseAdded() {
+        return isCheeseAdded;
+    }
+
+    public boolean isToppingAdded() {
+        return isToppingAdded;
+    }
+
 
     public Pizza(Boolean isVeg){
         this.isVeg = isVeg;
+        this.toppingsAdder = new ToppingsAdderImpl();
+        this.cheeseAdder = new CheeseAdderImpl();
+        this.billGenerator = new BillGeneratorImpl();
+        this.price = getBasePrice();
         // your code goes here
+    }
+
+    public int getBasePrice() {
+        return Boolean.TRUE.equals(isVeg) ? vegPizzaBasePrice : nonVegPizzaBasePrice;
     }
 
     public int getPrice(){
@@ -16,19 +56,33 @@ public class Pizza {
     }
 
     public void addExtraCheese(){
-        // your code goes here
+        int addCheeseprice = cheeseAdder.addCheese(isCheeseAdded);
+        price += addCheeseprice;
+        cheesePrice += addCheeseprice;
+        isCheeseAdded = true;
     }
 
     public void addExtraToppings(){
-        // your code goes here
+        int addToppingPrice = toppingsAdder.addToppings(isVeg, isToppingAdded);
+        price += addToppingPrice;
+        toppingPrice += addToppingPrice;
+        isToppingAdded = true;
     }
 
     public void addTakeaway(){
-        // your code goes here
+        if(!isTakeAway) this.price += takeAwayPrice;
+        isTakeAway = true;
+    }
+
+    public boolean isTakeAway() {
+        return isTakeAway;
     }
 
     public String getBill(){
-        // your code goes here
-        return this.bill;
+        return billGenerator.generateBill(this);
+    }
+
+    public int getTakeAwayPrice() {
+        return takeAwayPrice;
     }
 }
